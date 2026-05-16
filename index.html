@@ -31,7 +31,6 @@
         #yesBtn { background-color: #ff4d4d; color: white; }
         #noBtn { background-color: #808080; color: white; position: absolute; left: 100px; }
         
-        /* Идеальное текстовое сердце */
         #heartContainer {
             display: none;
             position: absolute;
@@ -61,8 +60,6 @@
     </div>
 
     <div id="heartContainer"></div>
-
-    <!-- Музыка просто зациклена и поет сама по себе -->
     <audio id="bgMusic" src="music.mp3" loop preload="auto"></audio>
 
     <script>
@@ -82,42 +79,41 @@
         noBtn.addEventListener('mouseover', moveButton);
         noBtn.addEventListener('touchstart', moveButton);
 
-        // Шаблон ровного, заполненного сердца из слов "love you"
+        // Пересобрали шаблон без скрытых символов — теперь он отобразится ровно
         const heartTemplate = 
-`          love you love you          love you love you
-      love you love you love you  love you love you love you
-    love you love you love you love you love you love you love you
-  love you love you love you love you love you love you love you love you
- love you love you love you love you love you love you love you love you love
-love you love you love you love you love you love you love you love you love you
-love you love you love you love you love you love you love you love you love you
-love you love you love you love you love you love you love you love you love you
- love you love you love you love you love you love you love you love you love
-  love you love you love you love you love you love you love you love you
-    love you love you love you love you love you love you love you
-      love you love you love you love you love you love you
-          love you love you love you love you love you
-              love you love you love you love you
-                  love you love you love you
-                      love you love you
-                          love you`;
+            "          love you love you          love you love you\n" +
+            "      love you love you love you  love you love you love you\n" +
+            "    love you love you love you love you love you love you love you\n" +
+            "  love you love you love you love you love you love you love you love you\n" +
+            " love you love you love you love you love you love you love you love you love\n" +
+            "love you love you love you love you love you love you love you love you love you\n" +
+            "love you love you love you love you love you love you love you love you love you\n" +
+            "love you love you love you love you love you love you love you love you love you\n" +
+            " love you love you love you love you love you love you love you love you love\n" +
+            "  love you love you love you love you love you love you love you love you\n" +
+            "    love you love you love you love you love you love you love you\n" +
+            "      love you love you love you love you love you love you\n" +
+            "          love you love you love you love you love you\n" +
+            "              love you love you love you love you\n" +
+            "                  love you love you love you\n" +
+            "                      love you love you\n" +
+            "                          love you";
 
         function startHeartAnimation() {
             document.body.style.backgroundColor = '#000000';
             heartContainer.innerText = heartTemplate;
             heartContainer.style.display = 'block';
 
-            let currentScale = 0.1; // Стартует маленьким из центра, как фейерверк
-            const targetScale = 1.0; // Размер, на котором оно застынет (идеально под экраны)
-            const speed = 0.002; // ОЧЕНЬ медленная скорость расширения (примерно 7-8 секунд до остановки)
+            let currentScale = 0.1; 
+            const targetScale = 1.0; 
+            const speed = 0.002; // Медленная скорость раскрытия (около 7-8 секунд)
 
             function animate() {
                 if (currentScale < targetScale) {
-                    currentScale += speed; // Плавно растет
+                    currentScale += speed; 
                     heartContainer.style.transform = `translate(-50%, -50%) scale(${currentScale})`;
                     requestAnimationFrame(animate);
                 } else {
-                    // Как только дошло до нужного размера — намертво останавливается и просто стоит
                     heartContainer.style.transform = `translate(-50%, -50%) scale(${targetScale})`;
                 }
             }
@@ -132,7 +128,7 @@ love you love you love you love you love you love you love you love you love you
             
             if (music) {
                 music.volume = 1.0;
-                music.play().catch(e => console.log("Браузер заблокировал звук:", e));
+                music.play().catch(e => console.log("Звук заблокирован:", e));
             }
         });
     </script>
