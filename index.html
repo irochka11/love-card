@@ -80,7 +80,6 @@
             const words = [];
             const text = "love you"; 
             
-            // Стабильная базовая кривая сердца
             function getHeartCoords(t) {
                 return {
                     x: 16 * Math.pow(Math.sin(t), 3),
@@ -88,30 +87,29 @@
                 };
             }
 
-            // Создаем плотное заполнение слоями от центра к краям фигуры
-            for (let scaleLayer = 1; scaleLayer <= 18; scaleLayer += 1.2) {
-                const totalPoints = scaleLayer * 4 + 10;
+            // Настройка слоев: убрали самые маленькие внутренние слои, чтобы разгрузить центр
+            for (let scaleLayer = 4; scaleLayer <= 17; scaleLayer += 1.6) {
+                const totalPoints = scaleLayer * 3 + 8;
                 for (let i = 0; i < totalPoints; i++) {
                     const t = (i / totalPoints) * Math.PI * 2;
                     const pos = getHeartCoords(t);
                     words.push({
-                        dx: pos.x * scaleLayer * 0.9 + (Math.random() * 12 - 6),
-                        dy: pos.y * scaleLayer * 0.9 + (Math.random() * 12 - 6),
-                        size: Math.floor(Math.random() * 4) + 13
+                        dx: pos.x * scaleLayer * 0.95 + (Math.random() * 6 - 3),
+                        dy: pos.y * scaleLayer * 0.95 + (Math.random() * 6 - 3),
+                        size: Math.floor(Math.random() * 3) + 14
                     });
                 }
             }
 
-            let currentScale = 0.05;
+            // Стартуем сразу с базового масштаба 1.0 (сердце сразу большое)
+            let currentScale = 1.0; 
 
             function draw() {
                 ctx.fillStyle = 'black';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-                // Плавное раскрытие фейерверка, останавливается на масштабе 1.0
-                if (currentScale < 1.0) {
-                    currentScale += 0.006; 
-                }
+                // ОЧЕНЬ медленное расширение (минимальный шаг анимации)
+                currentScale += 0.0003; 
 
                 ctx.save();
                 ctx.translate(canvas.width / 2, canvas.height / 2);
@@ -119,7 +117,7 @@
                 words.forEach(w => {
                     ctx.font = `italic bold ${w.size}px 'Trebuchet MS', sans-serif`;
                     ctx.fillStyle = "#ff3366";
-                    ctx.shadowBlur = 12;
+                    ctx.shadowBlur = 10;
                     ctx.shadowColor = '#ff3366';
                     
                     ctx.fillText(text, w.dx * currentScale, w.dy * currentScale);
