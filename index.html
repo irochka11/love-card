@@ -86,35 +86,31 @@
                 return Math.pow(nx*nx + ny*ny - 1, 3) - nx*nx * Math.pow(ny, 3) <= 0;
             }
 
-            // Аккуратная и плотная сетка без наслоения кучи слов друг на друга
-            for (let y = -280; y <= 280; y += 23) {
-                let shift = (Math.abs(y) % 46 === 0) ? 0 : 31;
-                for (let x = -280 + shift; x <= 280; x += 64) {
+            // Уменьшили шаг сетки (сделали её в разы плотнее), чтобы гарантированно заполнить форму
+            // Теперь слова гарантированно найдут свои координаты и построят полноценное сердце
+            for (let y = -300; y <= 300; y += 15) {
+                for (let x = -300; x <= 300; x += 50) {
                     if (isInsideHeart(x, y)) {
                         words.push({
                             dx: x,
                             dy: y,
-                            size: 14
+                            size: 13
                         });
                     }
                 }
             }
 
-            // Создаем независимый счетчик времени
             let startTime = Date.now();
 
             function draw() {
                 ctx.fillStyle = 'black';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-                // Вычисляем, сколько секунд прошло с момента нажатия кнопки
                 let elapsedSeconds = (Date.now() - startTime) / 1000;
-                
-                // Делаем бесконечный цикл анимации по 5 секунд
                 let loopTime = elapsedSeconds % 5; 
 
-                // Рассчитываем плавный масштаб расширения от 0.85 до 1.08
-                let currentScale = 0.85 + (loopTime / 5) * 0.23;
+                // Плавное аккуратное расширение в такт
+                let currentScale = 0.88 + (loopTime / 5) * 0.18;
 
                 ctx.save();
                 ctx.translate(canvas.width / 2, canvas.height / 2);
@@ -122,7 +118,7 @@
                 words.forEach(w => {
                     ctx.font = `italic bold ${w.size}px 'Trebuchet MS', sans-serif`;
                     ctx.fillStyle = "#ff3366";
-                    ctx.shadowBlur = 10;
+                    ctx.shadowBlur = 8;
                     ctx.shadowColor = '#ff3366';
                     
                     ctx.fillText(text, w.dx * currentScale, w.dy * currentScale);
@@ -133,7 +129,6 @@
             }
             draw();
 
-            // Синхронно перезапускаем саму музыку каждые 5 секунд, чтобы она совпадала с сердцем
             setInterval(() => {
                 if (music) {
                     music.currentTime = 0;
