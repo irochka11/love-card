@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Для тебя ❤️</title>
-    <!-- Подключаем красивый каллиграфический шрифт из Google Fonts -->
-    <link href="https://googleapis.com" rel="stylesheet">
     <style>
         body {
             display: flex;
@@ -14,7 +12,7 @@
             justify-content: center;
             height: 100vh;
             background-color: #ffe6e6;
-            font-family: 'Arial', sans-serif;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             overflow: hidden;
             margin: 0;
             transition: background-color 1s;
@@ -79,22 +77,23 @@
             canvas.height = window.innerHeight;
 
             const words = [];
-            const text = "love you"; // Изменили текст по вашему желанию
+            const text = "love you"; 
             
+            // Надежная формула контура сердца
             function isInsideHeart(x, y) {
-                const nx = x / 15;
-                const ny = -y / 15;
+                const nx = x / 16;
+                const ny = -y / 16;
                 return Math.pow(nx*nx + ny*ny - 1, 3) - nx*nx * Math.pow(ny, 3) <= 0;
             }
 
-            // Генерируем плотную сетку каллиграфических надписей
-            for (let x = -260; x <= 260; x += 22) {
-                for (let y = -260; y <= 260; y += 22) {
+            // Заполняем форму сердца текстом без сбоев шрифта
+            for (let x = -300; x <= 300; x += 25) {
+                for (let y = -300; y <= 300; y += 25) {
                     if (isInsideHeart(x, y)) {
                         words.push({
-                            dx: x + (Math.random() * 8 - 4),
-                            dy: y + (Math.random() * 8 - 4),
-                            size: Math.floor(Math.random() * 6) + 20 // Увеличили размер для рукописного шрифта
+                            dx: x + (Math.random() * 6 - 3),
+                            dy: y + (Math.random() * 6 - 3),
+                            size: Math.floor(Math.random() * 4) + 14
                         });
                     }
                 }
@@ -106,19 +105,19 @@
                 ctx.fillStyle = 'black';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-                if (currentScale < 1.05) {
-                    currentScale += 0.0035; // Плавное раскрытие фейерверка
+                if (currentScale < 1.0) {
+                    currentScale += 0.005; // Скорость появления фейерверка
                 }
 
                 ctx.save();
                 ctx.translate(canvas.width / 2, canvas.height / 2);
 
                 words.forEach(w => {
-                    // Применяем новый изящный шрифт 'Great Vibes'
-                    ctx.font = `${w.size}px 'Great Vibes', cursive`;
-                    ctx.fillStyle = "#ff4d6d";
-                    ctx.shadowBlur = 12;
-                    ctx.shadowColor = '#ff4d6d';
+                    // Используем красивый встроенный шрифт без засечек
+                    ctx.font = `italic bold ${w.size}px 'Trebuchet MS', sans-serif`;
+                    ctx.fillStyle = "#ff3366";
+                    ctx.shadowBlur = 10;
+                    ctx.shadowColor = '#ff3366';
                     
                     ctx.fillText(text, w.dx * currentScale, w.dy * currentScale);
                 });
