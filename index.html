@@ -51,7 +51,6 @@
     </div>
 
     <canvas id="heartCanvas"></canvas>
-    <!-- loop заставляет музыку играть бесконечно по кругу -->
     <audio id="bgMusic" src="music.mp3" loop preload="auto"></audio>
 
     <script>
@@ -87,12 +86,10 @@
                 return Math.pow(nx*nx + ny*ny - 1, 3) - nx*nx * Math.pow(ny, 3) <= 0;
             }
 
-            // Плотная дизайнерская сетка (эффект кирпичной кладки)
-            // Расстояние подобрано так, чтобы буквы аккуратно заполняли всё без каши в центре
-            for (let y = -280; y <= 280; y += 22) {
-                // Делаем сдвиг каждой четной строчки для красивого переплетения слов
-                let shift = (Math.abs(y) % 44 === 0) ? 0 : 30;
-                for (let x = -280 + shift; x <= 280; x += 62) {
+            // Аккуратная и плотная сетка без наслоения кучи слов друг на друга
+            for (let y = -280; y <= 280; y += 23) {
+                let shift = (Math.abs(y) % 46 === 0) ? 0 : 31;
+                for (let x = -280 + shift; x <= 280; x += 64) {
                     if (isInsideHeart(x, y)) {
                         words.push({
                             dx: x,
@@ -103,23 +100,21 @@
                 }
             }
 
+            // Создаем независимый счетчик времени
+            let startTime = Date.now();
+
             function draw() {
                 ctx.fillStyle = 'black';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-                // Вычисляем текущее положение музыки
-                let currentTime = music.currentTime;
-                // Нам нужен цикл в первые 5 секунд трека
-                let musicTimeline = currentTime % 5; 
+                // Вычисляем, сколько секунд прошло с момента нажатия кнопки
+                let elapsedSeconds = (Date.now() - startTime) / 1000;
+                
+                // Делаем бесконечный цикл анимации по 5 секунд
+                let loopTime = elapsedSeconds % 5; 
 
-                // Рассчитываем плавный масштаб от 0.85 до 1.08 на основе секунд звука
-                let currentScale = 0.85 + (musicTimeline / 5) * 0.23;
-
-                // Если вдруг музыка дошла до конца 5 секунд (или перезапустилась), 
-                // анимация автоматически сбросится в начало трека вместе с ней
-                if (currentTime >= 5 && musicTimeline < 0.1) {
-                    currentScale = 0.85;
-                }
+                // Рассчитываем плавный масштаб расширения от 0.85 до 1.08
+                let currentScale = 0.85 + (loopTime / 5) * 0.23;
 
                 ctx.save();
                 ctx.translate(canvas.width / 2, canvas.height / 2);
@@ -137,6 +132,14 @@
                 animationFrame = requestAnimationFrame(draw);
             }
             draw();
+
+            // Синхронно перезапускаем саму музыку каждые 5 секунд, чтобы она совпадала с сердцем
+            setInterval(() => {
+                if (music) {
+                    music.currentTime = 0;
+                    music.play().catch(e => console.log(e));
+                }
+            }, 5000);
         }
 
         yesBtn.addEventListener('click', () => {
