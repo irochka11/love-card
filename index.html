@@ -87,29 +87,37 @@
                 };
             }
 
-            // Настройка слоев: убрали самые маленькие внутренние слои, чтобы разгрузить центр
-            for (let scaleLayer = 4; scaleLayer <= 17; scaleLayer += 1.6) {
-                const totalPoints = scaleLayer * 3 + 8;
+            // Увеличили начальный слой до 6, чтобы полностью освободить центр от налипания
+            for (let scaleLayer = 6; scaleLayer <= 17; scaleLayer += 1.6) {
+                const totalPoints = scaleLayer * 3 + 6;
                 for (let i = 0; i < totalPoints; i++) {
                     const t = (i / totalPoints) * Math.PI * 2;
                     const pos = getHeartCoords(t);
+                    
+                    // Дополнительный жесткий фильтр: убираем точки, слишком близкие к вертикальной оси центра
+                    if (Math.abs(pos.x * scaleLayer) < 45 && scaleLayer < 10) {
+                        continue; 
+                    }
+
                     words.push({
                         dx: pos.x * scaleLayer * 0.95 + (Math.random() * 6 - 3),
                         dy: pos.y * scaleLayer * 0.95 + (Math.random() * 6 - 3),
-                        size: Math.floor(Math.random() * 3) + 14
+                        size: Math.floor(Math.random() * 2) + 14
                     });
                 }
             }
 
-            // Стартуем сразу с базового масштаба 1.0 (сердце сразу большое)
-            let currentScale = 1.0; 
+            let currentScale = 0.95; // Начинает чуть меньше базового
+            const targetScale = 1.05; // Момент, на котором анимация плавно остановится
 
             function draw() {
                 ctx.fillStyle = 'black';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-                // ОЧЕНЬ медленное расширение (минимальный шаг анимации)
-                currentScale += 0.0003; 
+                // Медленно доходим до нужной точки и останавливаем расширение
+                if (currentScale < targetScale) {
+                    currentScale += 0.0008; 
+                }
 
                 ctx.save();
                 ctx.translate(canvas.width / 2, canvas.height / 2);
