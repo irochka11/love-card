@@ -31,13 +31,13 @@
         #yesBtn { background-color: #ff4d4d; color: white; }
         #noBtn { background-color: #808080; color: white; position: absolute; left: 100px; }
         
-        /* Стили для текстового сердца */
+        /* Идеальное текстовое сердце */
         #heartContainer {
             display: none;
             position: absolute;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%) scale(0.85);
+            transform: translate(-50%, -50%) scale(0.1);
             text-align: center;
             font-family: 'Trebuchet MS', sans-serif;
             font-weight: bold;
@@ -45,7 +45,7 @@
             font-size: 14px;
             line-height: 1.3;
             color: #ff3366;
-            text-shadow: 0 0 10px #ff3366;
+            text-shadow: 0 0 12px #ff3366;
             white-space: pre;
             z-index: 1;
             user-select: none;
@@ -60,9 +60,9 @@
         <button id="noBtn">Нет</button>
     </div>
 
-    <!-- Текстовый блок в форме идеального сердца -->
     <div id="heartContainer"></div>
 
+    <!-- Музыка просто зациклена и поет сама по себе -->
     <audio id="bgMusic" src="music.mp3" loop preload="auto"></audio>
 
     <script>
@@ -82,20 +82,19 @@
         noBtn.addEventListener('mouseover', moveButton);
         noBtn.addEventListener('touchstart', moveButton);
 
-        // Шаблон идеального заполненного сердца из слов "love you"
-        // Текст смещен, чтобы не наслаиваться друг на друга в кашу
+        // Шаблон ровного, заполненного сердца из слов "love you"
         const heartTemplate = 
 `          love you love you          love you love you
       love you love you love you  love you love you love you
-    love you love you love you love you love you love you lov
-  love you love you love you love you love you love you love you
- love you love you love you love you love you love you love you lo
-love you love you love you love you love you love you love you love
-love you love you love you love you love you love you love you love 
-love you love you love you love you love you love you love you love
- love you love you love you love you love you love you love you lo
-  love you love you love you love you love you love you love you
-    love you love you love you love you love you love you love
+    love you love you love you love you love you love you love you
+  love you love you love you love you love you love you love you love you
+ love you love you love you love you love you love you love you love you love
+love you love you love you love you love you love you love you love you love you
+love you love you love you love you love you love you love you love you love you
+love you love you love you love you love you love you love you love you love you
+ love you love you love you love you love you love you love you love you love
+  love you love you love you love you love you love you love you love you
+    love you love you love you love you love you love you love you
       love you love you love you love you love you love you
           love you love you love you love you love you
               love you love you love you love you
@@ -108,28 +107,21 @@ love you love you love you love you love you love you love you love
             heartContainer.innerText = heartTemplate;
             heartContainer.style.display = 'block';
 
-            let startTime = Date.now();
+            let currentScale = 0.1; // Стартует маленьким из центра, как фейерверк
+            const targetScale = 1.0; // Размер, на котором оно застынет (идеально под экраны)
+            const speed = 0.002; // ОЧЕНЬ медленная скорость расширения (примерно 7-8 секунд до остановки)
 
             function animate() {
-                let elapsedSeconds = (Date.now() - startTime) / 1000;
-                let loopTime = elapsedSeconds % 5; // Цикл ровно под 5 секунд вашей музыки
-
-                // Плавное медленное расширение от 0.88 до 1.05
-                let currentScale = 0.88 + (loopTime / 5) * 0.17;
-                
-                heartContainer.style.transform = `translate(-50%, -50%) scale(${currentScale})`;
-                
-                requestAnimationFrame(animate);
+                if (currentScale < targetScale) {
+                    currentScale += speed; // Плавно растет
+                    heartContainer.style.transform = `translate(-50%, -50%) scale(${currentScale})`;
+                    requestAnimationFrame(animate);
+                } else {
+                    // Как только дошло до нужного размера — намертво останавливается и просто стоит
+                    heartContainer.style.transform = `translate(-50%, -50%) scale(${targetScale})`;
+                }
             }
             animate();
-
-            // Перезапуск музыки каждые 5 секунд синхронно с анимацией
-            setInterval(() => {
-                if (music) {
-                    music.currentTime = 0;
-                    music.play().catch(e => console.log(e));
-                }
-            }, 5000);
         }
 
         yesBtn.addEventListener('click', () => {
@@ -140,7 +132,7 @@ love you love you love you love you love you love you love you love
             
             if (music) {
                 music.volume = 1.0;
-                music.play().catch(e => console.log("Звук заблокирован:", e));
+                music.play().catch(e => console.log("Браузер заблокировал звук:", e));
             }
         });
     </script>
