@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Для тебя ❤️</title>
+    <!-- Подключаем красивый каллиграфический шрифт из Google Fonts -->
+    <link href="https://googleapis.com" rel="stylesheet">
     <style>
         body {
             display: flex;
@@ -77,57 +79,48 @@
             canvas.height = window.innerHeight;
 
             const words = [];
-            const text = "I love you";
+            const text = "love you"; // Изменили текст по вашему желанию
             
-            function getHeartPoint(t) {
-                return {
-                    x: 16 * Math.pow(Math.sin(t), 3),
-                    y: -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t))
-                };
+            function isInsideHeart(x, y) {
+                const nx = x / 15;
+                const ny = -y / 15;
+                return Math.pow(nx*nx + ny*ny - 1, 3) - nx*nx * Math.pow(ny, 3) <= 0;
             }
 
-            // Уменьшили количество элементов со 180 до 75 для читаемости текста
-            const totalElements = 75; 
-            for (let i = 0; i < totalElements; i++) {
-                const t = (i / totalElements) * Math.PI * 2;
-                const point = getHeartPoint(t);
-                words.push({
-                    baseX: point.x * 14, // Немного увеличили масштаб самого сердца
-                    baseY: point.y * 14,
-                    angle: t
-                });
+            // Генерируем плотную сетку каллиграфических надписей
+            for (let x = -260; x <= 260; x += 22) {
+                for (let y = -260; y <= 260; y += 22) {
+                    if (isInsideHeart(x, y)) {
+                        words.push({
+                            dx: x + (Math.random() * 8 - 4),
+                            dy: y + (Math.random() * 8 - 4),
+                            size: Math.floor(Math.random() * 6) + 20 // Увеличили размер для рукописного шрифта
+                        });
+                    }
+                }
             }
 
-            let scale = 1;
-            let growing = true;
+            let currentScale = 0.1;
 
             function draw() {
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.2)'; 
+                ctx.fillStyle = 'black';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-                // Замедлили скорость пульсации (было шаг 0.008, стало 0.003)
-                if (growing) {
-                    scale += 0.003;
-                    if (scale > 1.08) growing = false;
-                } else {
-                    scale -= 0.003;
-                    if (scale < 0.92) growing = true;
+                if (currentScale < 1.05) {
+                    currentScale += 0.0035; // Плавное раскрытие фейерверка
                 }
 
                 ctx.save();
                 ctx.translate(canvas.width / 2, canvas.height / 2);
 
                 words.forEach(w => {
-                    // Увеличили размер шрифта букв до 16px, чтобы текст читался
-                    ctx.font = "bold 16px Arial"; 
-                    ctx.fillStyle = "#ff3366";
-                    ctx.shadowBlur = 10;
-                    ctx.shadowColor = '#ff3366';
+                    // Применяем новый изящный шрифт 'Great Vibes'
+                    ctx.font = `${w.size}px 'Great Vibes', cursive`;
+                    ctx.fillStyle = "#ff4d6d";
+                    ctx.shadowBlur = 12;
+                    ctx.shadowColor = '#ff4d6d';
                     
-                    const offsetX = Math.sin(Date.now() * 0.0015 + w.angle) * 3;
-                    const offsetY = Math.cos(Date.now() * 0.0015 + w.angle) * 3;
-
-                    ctx.fillText(text, (w.baseX + offsetX) * scale, (w.baseY + offsetY) * scale);
+                    ctx.fillText(text, w.dx * currentScale, w.dy * currentScale);
                 });
 
                 ctx.restore();
@@ -143,15 +136,9 @@
             
             startHeartAnimation();
             
-            // Исправленный принудительный запуск аудио
             if (music) {
                 music.volume = 1.0;
-                const playPromise = music.play();
-                if (playPromise !== undefined) {
-                    playPromise.catch(error => {
-                        console.log("Ошибка воспроизведения звука:", error);
-                    });
-                }
+                music.play().catch(e => console.log("Звук заблокирован:", e));
             }
         });
 
