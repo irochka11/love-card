@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Для тебя ❤️</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #ffe6e6;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+            margin: 0;
+        }
+        h1 { color: #ff4d4d; font-size: 2.5rem; text-align: center; }
+        .buttons { display: flex; gap: 20px; margin-top: 20px; position: relative; }
+        button {
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        #yesBtn { background-color: #ff4d4d; color: white; }
+        #noBtn { background-color: #808080; color: white; position: absolute; left: 100px; }
+    </style>
+</head>
+<body>
+
+    <h1 id="question">Ты меня любишь? 🥺</h1>
+    <div class="buttons">
+        <button id="yesBtn">Да!</button>
+        <button id="noBtn">Нет</button>
+    </div>
+
+    <!-- Музыкальный плеер -->
+    <audio id="bgMusic" src="music.mp3" loop></audio>
+
+    <script>
+        const noBtn = document.getElementById('noBtn');
+        const yesBtn = document.getElementById('yesBtn');
+        const question = document.getElementById('question');
+        const music = document.getElementById('bgMusic');
+
+        function moveButton() {
+            const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
+            const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
+            noBtn.style.left = `${x}px`;
+            noBtn.style.top = `${y}px`;
+        }
+
+        noBtn.addEventListener('mouseover', moveButton);
+        noBtn.addEventListener('touchstart', moveButton);
+
+        yesBtn.addEventListener('click', () => {
+            question.innerHTML = "Ура! Я тоже тебя люблю! ❤️";
+            document.querySelector('.buttons').style.display = 'none';
+            document.body.style.backgroundColor = '#ffb3b3';
+            
+            // Музыка включится при нажатии на "Да"
+            music.play().catch(error => {
+                console.log("Браузер заблокировал звук:", error);
+            });
+        });
+    </script>
+</body>
+</html>
